@@ -94,7 +94,7 @@ app.include_router(operators.router)
 app.include_router(reports.router)
 
 
-@app.get("/", methods=["GET", "HEAD"])
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root():
     """Root endpoint - API health check"""
     return {
