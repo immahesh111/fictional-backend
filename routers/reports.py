@@ -66,13 +66,20 @@ async def get_operator_report(
         )
         entries.append(entry)
     
+    # Calculate average duration
+    average_duration = 0.0
+    if total_logins > 0:
+        average_duration = total_hours / total_logins
+    
     # Create report
     report = OperatorReport(
         operator_id=operator.operator_id,
         operator_name=operator.name,
         machine_no=operator.machine_no,
+        shift=operator.shift,
         total_logins=total_logins,
         total_hours=round(total_hours, 2),
+        average_duration=round(average_duration, 2),
         entries=entries
     )
     

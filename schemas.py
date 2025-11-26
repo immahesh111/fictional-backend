@@ -93,8 +93,10 @@ class OperatorReport(BaseModel):
     operator_id: str
     operator_name: str
     machine_no: str
+    shift: Optional[str]
     total_logins: int
     total_hours: float
+    average_duration: float
     entries: list[ReportEntry]
 
 
