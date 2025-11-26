@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "D:\VOXOV_Projects\Face_Detection_IoT\backend\debug_login_internal.py", line 8, in <module>
+    client = TestClient(app)
+             ^^^^^^^^^^^^^^^
+  File "C:\Users\ASUS\anaconda3\Lib\site-packages\starlette\testclient.py", line 399, in __init__
+    super().__init__(
+TypeError: Client.__init__() got an unexpected keyword argument 'app'
