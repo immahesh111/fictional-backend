@@ -101,18 +101,22 @@ async def root():
         "message": "Face Detection IoT API is running",
         "version": "1.0.0",
         "status": "healthy",
-        "mqtt_connected": mqtt_client.connected
+        "mqtt_connected": mqtt_client.is_connected
     }
 
 
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    return {
-        "status": "healthy",
-        "database": "connected",
-        "mqtt": "connected" if mqtt_client.connected else "disconnected"
-    }
+@app.get("/api/debug/routes")
+async def get_routes():
+    """Debug endpoint to list all registered routes"""
+    routes = []
+    for route in app.routes:
+        if hasattr(route, "path"):
+            routes.append({
+                "path": route.path,
+                "name": route.name,
+                "methods": list(route.methods) if hasattr(route, "methods") else None
+            })
+    return {"routes": routes}
 
 
 if __name__ == "__main__":
