@@ -66,3 +66,23 @@ async def get_current_admin_info(current_admin: Admin = Depends(get_current_admi
     Requires authentication
     """
     return current_admin
+
+
+@router.post("/reset-database", status_code=status.HTTP_200_OK)
+async def reset_database(
+    db: Session = Depends(get_db),
+    current_admin: Admin = Depends(get_current_admin)
+):
+    """
+    Reset database (delete all operators and logs)
+    Useful for fixing synchronization issues
+    Requires admin authentication
+    """
+    from models import Operator, LoginLog
+    
+    # Delete all records
+    db.query(LoginLog).delete()
+    db.query(Operator).delete()
+    db.commit()
+    
+    return {"message": "Database reset successfully"}
