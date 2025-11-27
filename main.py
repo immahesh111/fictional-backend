@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
+from datetime import datetime
 import os
 
 # Import database and models
@@ -101,29 +103,5 @@ async def root():
         "message": "Face Detection IoT API is running",
         "version": "1.0.0",
         "status": "healthy",
-        "mqtt_connected": mqtt_client.is_connected
+        "mqtt_connected": mqtt_client.connected
     }
-
-
-@app.get("/api/debug/routes")
-async def get_routes():
-    """Debug endpoint to list all registered routes"""
-    routes = []
-    for route in app.routes:
-        if hasattr(route, "path"):
-            routes.append({
-                "path": route.path,
-                "name": route.name,
-                "methods": list(route.methods) if hasattr(route, "methods") else None
-            })
-    return {"routes": routes}
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True
-    )
