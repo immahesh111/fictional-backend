@@ -61,7 +61,8 @@ async def create_operator(
         operator_id=operator_id,
         machine_no=machine_no,
         shift=shift,
-        face_image_path=face_image_path
+        face_image_path=face_image_path,
+        cloud_updated_at=datetime.now()  # Set for sync tracking
     )
     
     db.add(new_operator)
@@ -129,6 +130,9 @@ async def update_operator(
     for field, value in update_data.items():
         setattr(operator, field, value)
     
+    # Update sync timestamp
+    operator.cloud_updated_at = datetime.now()
+    
     db.commit()
     db.refresh(operator)
     
@@ -156,6 +160,7 @@ async def delete_operator(
     # Soft delete operator (mark as deleted instead of removing)
     operator.deleted = True
     operator.deleted_at = datetime.now()
+    operator.cloud_updated_at = datetime.now()  # Critical for sync to detect deletion
     operator.synced_to_cloud = False  # Mark for sync
     
     # Soft delete associated login logs

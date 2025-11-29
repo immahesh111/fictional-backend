@@ -26,9 +26,9 @@ async def get_all_data_since(since: str = "2000-01-01T00:00:00", db: Session = D
     except ValueError:
         since_dt = datetime(2000, 1, 1)
     
-    # Get operators
+    # Get operators (created OR updated OR deleted since timestamp)
     operators = db.query(Operator).filter(
-        Operator.created_at > since_dt
+        (Operator.cloud_updated_at > since_dt) | (Operator.created_at > since_dt)
     ).all()
     
     operators_data = []
@@ -55,9 +55,9 @@ async def get_all_data_since(since: str = "2000-01-01T00:00:00", db: Session = D
             "deleted_at": op.deleted_at.isoformat() if op.deleted_at else None
         })
     
-    # Get login logs
+    # Get login logs (created OR deleted since timestamp)
     logs = db.query(LoginLog).filter(
-        LoginLog.created_at > since_dt
+        (LoginLog.created_at > since_dt) | (LoginLog.deleted_at > since_dt)
     ).all()
     
     logs_data = []
