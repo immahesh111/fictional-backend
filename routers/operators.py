@@ -157,7 +157,10 @@ async def delete_operator(
         except Exception as e:
             print(f"Error deleting face image: {e}")
     
-    # Delete operator (login logs will be handled by cascade or separately)
+    # Delete associated login logs first (to avoid foreign key constraint violation)
+    db.query(LoginLog).filter(LoginLog.operator_id == operator_id).delete()
+    
+    # Now delete operator
     db.delete(operator)
     db.commit()
     
