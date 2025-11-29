@@ -2,26 +2,25 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models import Operator, LoginLog
-from typing import List, Dict
+from typing import List, Dict, Optional
 from datetime import datetime
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/api/sync", tags=["sync"])
 
-
 class OperatorSyncData(BaseModel):
     operator_id: str
     name: str
     machine_no: str
-    shift: str | None
-    face_image_url: str | None
+    shift: Optional[str]
+    face_image_url: Optional[str]
     updated_at: str
 
 
 class LoginLogSyncData(BaseModel):
     operator_id: str
     login_time: str
-    logout_time: str | None
+    logout_time: Optional[str]
     shift: str
     date: str
 
