@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import Operator, LoginLog, Admin
 from typing import List, Dict, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel
 import os
 import base64
@@ -91,7 +91,7 @@ async def get_all_data_since(since: str = "2000-01-01T00:00:00", db: Session = D
         "operators": operators_data,
         "logs": logs_data,
         "admins": admins_data,
-        "sync_timestamp": datetime.now().isoformat()
+        "sync_timestamp": datetime.now(timezone.utc).isoformat()
     }
 
 
