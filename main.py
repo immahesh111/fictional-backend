@@ -167,7 +167,12 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=[
+        "http://localhost",
+        "http://localhost:5173",
+        "https://fictional-fortnight-sepia.vercel.app",
+        "*"  # Keep wildcard for now to ensure connectivity, can restrict later
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
