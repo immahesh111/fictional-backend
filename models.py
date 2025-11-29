@@ -70,6 +70,9 @@ class Operator(Base):
     # Sync tracking fields
     synced_to_cloud = Column(Boolean, default=False)  # Whether synced to cloud
     cloud_updated_at = Column(DateTime(timezone=True), nullable=True)  # Last cloud update
+    # Deletion tracking (soft delete)
+    deleted = Column(Boolean, default=False)  # Soft delete flag
+    deleted_at = Column(DateTime(timezone=True), nullable=True)  # When deleted
 
 
 class LoginLog(Base):
@@ -86,3 +89,6 @@ class LoginLog(Base):
     # Sync tracking fields
     synced_to_cloud = Column(Boolean, default=False)  # Whether synced to cloud
     synced_at = Column(DateTime(timezone=True), nullable=True)  # When synced
+    # Deletion tracking (soft delete)
+    deleted = Column(Boolean, default=False)  # Soft delete flag
+    deleted_at = Column(DateTime(timezone=True), nullable=True)  # When deleted

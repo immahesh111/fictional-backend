@@ -50,7 +50,9 @@ async def get_all_data_since(since: str = "2000-01-01T00:00:00", db: Session = D
             "status": op.status,
             "face_image_b64": face_image_b64,
             "created_at": op.created_at.isoformat(),
-            "cloud_updated_at": op.cloud_updated_at.isoformat() if op.cloud_updated_at else None
+            "cloud_updated_at": op.cloud_updated_at.isoformat() if op.cloud_updated_at else None,
+            "deleted": op.deleted,
+            "deleted_at": op.deleted_at.isoformat() if op.deleted_at else None
         })
     
     # Get login logs
@@ -66,7 +68,9 @@ async def get_all_data_since(since: str = "2000-01-01T00:00:00", db: Session = D
             "logout_time": log.logout_time.isoformat() if log.logout_time else None,
             "shift": log.shift,
             "date": log.date,
-            "created_at": log.created_at.isoformat()
+            "created_at": log.created_at.isoformat(),
+            "deleted": log.deleted,
+            "deleted_at": log.deleted_at.isoformat() if log.deleted_at else None
         })
     
     # Get admins
@@ -118,6 +122,8 @@ async def receive_all_data(data: Dict, db: Session = Depends(get_db)):
                     existing.machine_no = op_data['machine_no']
                     existing.shift = op_data.get('shift')
                     existing.status = op_data.get('status', 'Offline')
+                    existing.deleted = op_data.get('deleted', False)
+                    existing.deleted_at = datetime.fromisoformat(op_data['deleted_at']) if op_data.get('deleted_at') else None
                     existing.cloud_updated_at = datetime.now()
                     
                     # Handle face image
@@ -153,6 +159,8 @@ async def receive_all_data(data: Dict, db: Session = Depends(get_db)):
                     shift=op_data.get('shift'),
                     status=op_data.get('status', 'Offline'),
                     face_image_path=face_image_path,
+                    deleted=op_data.get('deleted', False),
+                    deleted_at=datetime.fromisoformat(op_data['deleted_at']) if op_data.get('deleted_at') else None,
                     synced_to_cloud=True,
                     cloud_updated_at=datetime.now()
                 )
@@ -176,6 +184,8 @@ async def receive_all_data(data: Dict, db: Session = Depends(get_db)):
                     logout_time=datetime.fromisoformat(log_data['logout_time']) if log_data.get('logout_time') else None,
                     shift=log_data['shift'],
                     date=log_data['date'],
+                    deleted=log_data.get('deleted', False),
+                    deleted_at=datetime.fromisoformat(log_data['deleted_at']) if log_data.get('deleted_at') else None,
                     synced_to_cloud=True,
                     synced_at=datetime.now()
                 )

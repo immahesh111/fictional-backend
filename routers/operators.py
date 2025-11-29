@@ -80,7 +80,7 @@ async def get_all_operators(
     Get list of all operators
     Requires admin authentication
     """
-    operators = db.query(Operator).all()
+    operators = db.query(Operator).filter(Operator.deleted == False).all()
     return operators
 
 
@@ -94,7 +94,10 @@ async def get_operator(
     Get operator details by operator ID
     Requires admin authentication
     """
-    operator = db.query(Operator).filter(Operator.operator_id == operator_id).first()
+    operator = db.query(Operator).filter(
+        Operator.operator_id == operator_id,
+        Operator.deleted == False
+    ).first()
     if not operator:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -150,18 +153,18 @@ async def delete_operator(
             detail=f"Operator with ID {operator_id} not found"
         )
     
-    # Delete associated face image if exists
-    if operator.face_image_path and os.path.exists(operator.face_image_path):
-        try:
-            os.remove(operator.face_image_path)
-        except Exception as e:
-            print(f"Error deleting face image: {e}")
+    # Soft delete operator (mark as deleted instead of removing)
+    operator.deleted = True
+    operator.deleted_at = datetime.now()
+    operator.synced_to_cloud = False  # Mark for sync
     
-    # Delete associated login logs first (to avoid foreign key constraint violation)
-    db.query(LoginLog).filter(LoginLog.operator_id == operator_id).delete()
+    # Soft delete associated login logs
+    db.query(LoginLog).filter(LoginLog.operator_id == operator_id).update({
+        "deleted": True,
+        "deleted_at": datetime.now(),
+        "synced_to_cloud": False
+    })
     
-    # Now delete operator
-    db.delete(operator)
     db.commit()
     
     return None
